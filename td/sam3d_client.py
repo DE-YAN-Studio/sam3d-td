@@ -15,9 +15,10 @@ import urllib.request
 
 # ── config ────────────────────────────────────────────────────────────────
 
-SERVER_URL  = "http://127.0.0.1:8766"
-WORK_DIR    = "C:/Users/Zach/Desktop/Meta_AI/SAM3D/td/work"
-OUTPUT_SOP  = "geo1"          # File In SOP to update with the result (set "" to skip)
+SERVER_URL       = "http://127.0.0.1:8766"
+WORK_DIR         = "C:/Users/Zach/Code/Lab & Tools/Meta_AI/SAM3D/td/work"
+GLB_NODE         = "/project1/glbimport1"    # Glbimport SOP to update with each result
+GLB_TEXTURE_NODE = "/project1/glbtexture1"   # GlbTexture TOP to update with each result
 
 # ─────────────────────────────────────────────────────────────────────────
 
@@ -110,7 +111,7 @@ def _worker(job_id, image_path, mask_path, format, output_path, seed, texture_ba
         with urllib.request.urlopen(req, timeout=300) as resp:
             result = json.loads(resp.read())
         _results[job_id] = result
-        run("args[0](args[1], args[2])", [_finish, job_id, result], delayFrames=1)
+        run("args[0](args[1], args[2])", _finish, job_id, result, delayFrames=1)
 
     except urllib.error.HTTPError as e:
         msg = e.read().decode("utf-8", errors="replace")
@@ -124,13 +125,24 @@ def _worker(job_id, image_path, mask_path, format, output_path, seed, texture_ba
 def _finish(job_id, result):
     """Called on the TD main thread after inference completes."""
     out = result.get("output_path", "")
-    fmt = result.get("format", "")
     print(f"[SAM3D] Job {job_id} done → {out}")
 
-    if OUTPUT_SOP and out:
-        try:
-            op(OUTPUT_SOP).par.file = out
-            op(OUTPUT_SOP).par.reloadpulse.pulse()
-            print(f"[SAM3D] Loaded into {OUTPUT_SOP}")
-        except Exception as e:
-            print(f"[SAM3D] Could not update {OUTPUT_SOP}: {e}")
+    if not out:
+        return
+
+    try:
+        node = op(GLB_NODE)
+        if node is None:
+            print(f"[SAM3D] Node not found: {GLB_NODE}")
+            return
+        node.par.File = out
+        node.par.Reload.pulse()
+        print(f"[SAM3D] Updated {GLB_NODE} → {out}")
+
+        tex = op(GLB_TEXTURE_NODE)
+        if tex is not None:
+            tex.par.File = out
+            tex.par.Reload.pulse()
+            print(f"[SAM3D] Updated {GLB_TEXTURE_NODE} → {out}")
+    except Exception as e:
+        print(f"[SAM3D] Could not update nodes: {e}")

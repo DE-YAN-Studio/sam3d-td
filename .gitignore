@@ -19,3 +19,6 @@ __pycache__/
 # windows
 Thumbs.db
 desktop.ini
+
+# TouchDesigner import cache
+td/TDImportCache/
