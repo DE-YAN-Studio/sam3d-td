@@ -127,7 +127,7 @@ def generate_obj(image_path, mask_path, output_path="output.obj", seed=42, timeo
 # In TouchDesigner, use a Script CHOP or Button CHOP callback like this:
 #
 #   import sys
-#   sys.path.insert(0, "C:/Users/Zach/Code/Lab & Tools/Meta_AI/SAM3D")
+#   sys.path.insert(0, "C:/Users/Zach/Code/Lab-Tools/Meta_AI/SAM3D")
 #   import touchdesigner_client as sam3d
 #
 #   def onValueChange(channel, sampleIndex, val, prev):

@@ -16,7 +16,7 @@ import urllib.request
 # ── config ────────────────────────────────────────────────────────────────
 
 SERVER_URL       = "http://127.0.0.1:8766"
-WORK_DIR         = "C:/Users/Zach/Code/Lab & Tools/Meta_AI/SAM3D/td/work"
+WORK_DIR         = "C:/Users/Zach/Code/Lab-Tools/Meta_AI/SAM3D/td/work"
 GLB_NODE         = "/project1/glbimport1"    # Glbimport SOP to update with each result
 GLB_TEXTURE_NODE = "/project1/glbtexture1"   # GlbTexture TOP to update with each result
 
